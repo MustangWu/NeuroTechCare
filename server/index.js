@@ -186,7 +186,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-const PORT = process.env.API_PORT || 3001;
+const PORT = process.env.PORT || process.env.API_PORT || 3001;
 app.listen(PORT, () => {
   console.log(`API server running on http://localhost:${PORT}`);
 });
