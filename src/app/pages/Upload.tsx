@@ -140,6 +140,7 @@ export function Upload() {
                 <input
                   type="date"
                   value={recordingDate}
+                  max={new Date().toISOString().split("T")[0]}
                   onChange={(e) => {
                     setRecordingDate(e.target.value);
                     if (e.target.value) setErrors((prev) => ({ ...prev, recordingDate: undefined }));
