@@ -12,7 +12,7 @@ export function Navigation() {
               <Brain className="w-5 h-5 text-gray-700" />
             </div>
           <span className="text-xl font-bold text-gray-900">
-            NeuroTechCare
+            Cognitrack
           </span>
         </Link>
         
