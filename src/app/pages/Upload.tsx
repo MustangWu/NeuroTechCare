@@ -31,6 +31,19 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
+function UploadIllustration() {
+  return (
+    <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="8" y="20" width="56" height="44" rx="8" fill="#E8EFF8"/>
+      <rect x="20" y="34" width="32" height="5" rx="2.5" fill="#0D4F8C" fillOpacity="0.25"/>
+      <rect x="24" y="45" width="24" height="5" rx="2.5" fill="#0D4F8C" fillOpacity="0.18"/>
+      <circle cx="36" cy="16" r="12" fill="#1D9E75" fillOpacity="0.15"/>
+      <line x1="36" y1="22" x2="36" y2="10" stroke="#1D9E75" strokeWidth="2.5" strokeLinecap="round"/>
+      <polyline points="31,15 36,10 41,15" stroke="#1D9E75" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+    </svg>
+  );
+}
+
 export function Upload() {
   const [patientId, setPatientId] = useState("");
   const [recordingDate, setRecordingDate] = useState("");
@@ -94,28 +107,28 @@ export function Upload() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background">
       <Navigation />
 
       <div className="max-w-[1440px] mx-auto px-8 py-12">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-medium text-foreground mb-2">
               Upload Patient Recording
             </h1>
-            <p className="text-gray-700">
+            <p className="text-muted-foreground">
               Upload a consultation audio file for speech biomarker analysis
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} noValidate className="bg-white border-2 border-gray-400 p-8">
+          <form onSubmit={handleSubmit} noValidate className="bg-white border border-border rounded-lg py-4 px-6">
 
             {/* Patient ID + Recording Date */}
             <div className="grid grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Patient ID *
                 </label>
                 <input
@@ -126,15 +139,15 @@ export function Upload() {
                     if (e.target.value.trim()) setErrors((prev) => ({ ...prev, patientId: undefined }));
                   }}
                   placeholder="e.g., PT-2024-001"
-                  className={`w-full border-2 px-4 py-3 ${errors.patientId ? "border-red-500 bg-red-50" : "border-gray-400"}`}
+                  className={`w-full border px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 ${errors.patientId ? "border-destructive bg-red-50" : "border-border"}`}
                 />
                 {errors.patientId && (
-                  <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.patientId}</p>
+                  <p className="mt-1.5 text-xs text-destructive font-medium">{errors.patientId}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Recording Date *
                 </label>
                 <input
@@ -144,31 +157,31 @@ export function Upload() {
                     setRecordingDate(e.target.value);
                     if (e.target.value) setErrors((prev) => ({ ...prev, recordingDate: undefined }));
                   }}
-                  className={`w-full border-2 px-4 py-3 ${errors.recordingDate ? "border-red-500 bg-red-50" : "border-gray-400"}`}
+                  className={`w-full border px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 ${errors.recordingDate ? "border-destructive bg-red-50" : "border-border"}`}
                 />
                 {errors.recordingDate && (
-                  <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.recordingDate}</p>
+                  <p className="mt-1.5 text-xs text-destructive font-medium">{errors.recordingDate}</p>
                 )}
               </div>
             </div>
 
             {/* Audio Upload Zone */}
             <div className="mb-6">
-              <label className="block text-sm font-bold text-gray-900 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Audio File *
               </label>
               <div
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`border-4 p-16 text-center transition-colors ${
+                className={`border-4 p-16 text-center transition-colors rounded-lg ${
                   errors.file
-                    ? "border-dashed border-red-400 bg-red-50"
+                    ? "border-dashed border-destructive bg-red-50"
                     : isDragging
-                    ? "border-gray-900 bg-gray-200"
+                    ? "border-primary bg-secondary"
                     : file
-                    ? "border-gray-600 bg-gray-100"
-                    : "border-dashed border-gray-400 bg-gray-50"
+                    ? "border-accent bg-green-50"
+                    : "border-dashed border-border bg-background"
                 }`}
               >
                 <input
@@ -181,19 +194,24 @@ export function Upload() {
                 <label htmlFor="audio-upload" className="cursor-pointer">
                   {file ? (
                     <div className="flex flex-col items-center">
-                      <div className="w-16 h-16 bg-gray-400 border-2 border-gray-500 mb-4" />
-                      <p className="text-lg font-bold text-gray-900 mb-1">{file.name}</p>
-                      <p className="text-sm text-gray-600 mb-2">{formatFileSize(file.size)}</p>
-                      <p className="text-sm text-gray-700">Click to change file</p>
+                      <div className="w-16 h-16 bg-secondary rounded-xl mb-4 flex items-center justify-center">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                          <rect x="4" y="6" width="24" height="20" rx="4" fill="#E8EFF8"/>
+                          <path d="M12 16l3 3 5-5" stroke="#1D9E75" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <p className="text-lg font-medium text-foreground mb-1">{file.name}</p>
+                      <p className="text-xs text-muted-foreground mb-2">{formatFileSize(file.size)}</p>
+                      <p className="text-sm text-muted-foreground">Click to change file</p>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
-                      <div className="w-16 h-16 bg-gray-300 border-2 border-gray-400 mb-4" />
-                      <p className="text-lg font-bold text-gray-900 mb-2">
+                      <UploadIllustration />
+                      <p className="text-lg font-medium text-foreground mb-2 mt-2">
                         Drag and drop your audio file here
                       </p>
-                      <p className="text-sm text-gray-700 mb-4">or click to browse files</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-sm text-muted-foreground mb-4">or click to browse files</p>
+                      <p className="text-xs text-muted-foreground">
                         Supported formats: MP3, WAV, M4A &nbsp;·&nbsp; Max {MAX_FILE_SIZE_MB} MB
                       </p>
                     </div>
@@ -201,12 +219,12 @@ export function Upload() {
                 </label>
               </div>
               {errors.file && (
-                <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.file}</p>
+                <p className="mt-1.5 text-xs text-destructive font-medium">{errors.file}</p>
               )}
             </div>
 
             {/* Consent Checkbox */}
-            <div className={`mb-8 p-5 border-2 ${errors.consent ? "border-red-400 bg-red-50" : "border-gray-300 bg-gray-100"}`}>
+            <div className={`mb-8 p-5 border rounded-lg ${errors.consent ? "border-destructive bg-red-50" : "border-border bg-background"}`}>
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
                   type="checkbox"
@@ -215,21 +233,21 @@ export function Upload() {
                     setConsentChecked(e.target.checked);
                     if (e.target.checked) setErrors((prev) => ({ ...prev, consent: undefined }));
                   }}
-                  className="w-5 h-5 mt-0.5 border-2 border-gray-400"
+                  className="w-5 h-5 mt-0.5 border border-border rounded accent-primary"
                 />
                 <div className="flex-1">
-                  <span className="text-sm text-gray-900">
+                  <span className="text-sm text-foreground">
                     I confirm that informed consent has been obtained from the patient for this
                     recording to be used for clinical assessment purposes. *
                   </span>
-                  <p className="text-xs text-gray-700 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     This recording will be processed in accordance with Australian privacy
                     legislation and RACGP guidelines.
                   </p>
                 </div>
               </label>
               {errors.consent && (
-                <p className="mt-2 text-xs text-red-600 font-medium">{errors.consent}</p>
+                <p className="mt-2 text-xs text-destructive font-medium">{errors.consent}</p>
               )}
             </div>
 
@@ -237,7 +255,7 @@ export function Upload() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-4 px-6 font-bold text-lg border-2 bg-gray-800 text-white border-gray-900 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full py-4 px-6 font-medium text-base rounded-lg bg-primary text-primary-foreground border border-primary disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Analysing…" : "Upload & Analyse"}
             </button>

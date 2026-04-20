@@ -92,16 +92,16 @@ function ChartShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white p-8 border-2 border-gray-400">
-      <h2 className="text-xl font-bold text-gray-900 mb-1">{title}</h2>
-      <p className="text-sm text-gray-600 mb-6">{subtitle}</p>
+    <div className="bg-white py-4 px-6 border border-border rounded-lg">
+      <h2 className="text-xl font-medium text-foreground mb-1">{title}</h2>
+      <p className="text-xs text-muted-foreground mb-6">{subtitle}</p>
       {loading && (
-        <div className="h-64 flex items-center justify-center text-gray-400 text-sm">
+        <div className="h-64 flex items-center justify-center text-muted-foreground text-sm">
           Loading…
         </div>
       )}
       {error && (
-        <div className="h-64 flex items-center justify-center text-red-500 text-sm">
+        <div className="h-64 flex items-center justify-center text-destructive text-sm">
           Failed to load data: {error}
         </div>
       )}
@@ -124,11 +124,11 @@ function FilterSelect({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-xs font-medium text-gray-500">{label}</label>
+      <label className="text-xs font-medium text-muted-foreground">{label}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="border border-gray-300 rounded px-2 py-1 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-gray-400 min-w-[130px]"
+        className="border border-border rounded-lg px-2 py-1 text-sm text-foreground bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 min-w-[130px]"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -153,10 +153,10 @@ function FilterBtn({
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-1 text-xs font-medium border-2 transition-colors ${
+      className={`px-3 py-1 text-xs font-medium border rounded-lg transition-colors ${
         active
-          ? "bg-gray-900 text-white border-gray-900"
-          : "bg-white text-gray-600 border-gray-400 hover:border-gray-600"
+          ? "bg-primary text-primary-foreground border-primary"
+          : "bg-white text-muted-foreground border-border hover:border-primary hover:text-primary"
       }`}
     >
       {children}
@@ -289,31 +289,31 @@ function BurdenByAgeChart() {
           {
             label: "Australians",
             val: kpiPersons?.total,
-            color: "text-gray-900",
+            color: "text-foreground",
           },
           {
             label: "Australian females",
             val: kpiFemales?.total,
-            color: "text-red-600",
+            color: "text-destructive",
           },
           {
             label: "Australian males",
             val: kpiMales?.total,
-            color: "text-teal-700",
+            color: "text-accent",
           },
         ].map(({ label, val, color }) => (
           <div
             key={label}
-            className="border border-gray-300 rounded p-4 text-center"
+            className="border border-border rounded-lg p-4 text-center bg-background"
           >
-            <p className="text-xs text-gray-500 mb-1">
+            <p className="text-xs text-muted-foreground mb-1">
               In {year},{" "}
               <span className={color}>{label}</span> had
             </p>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-[26px] font-medium text-foreground">
               {val != null ? Number(val).toLocaleString() : "—"}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               disability-adjusted life years ({measureLabel})
             </p>
           </div>
@@ -351,7 +351,7 @@ function BurdenByAgeChart() {
           }))}
         />
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">
+          <label className="text-xs font-medium text-muted-foreground">
             Select measure
           </label>
           <div className="flex gap-2">
@@ -374,10 +374,10 @@ function BurdenByAgeChart() {
           data={chartData}
           margin={{ top: 10, right: 60, left: 10, bottom: 60 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#DDE3EC" />
           <XAxis
             dataKey="age"
-            tick={{ fontSize: 10, fill: "#6b7280" }}
+            tick={{ fontSize: 10, fill: "#637282" }}
             tickLine={false}
             angle={-45}
             textAnchor="end"
@@ -386,12 +386,12 @@ function BurdenByAgeChart() {
               value: "Age group (years)",
               position: "insideBottom",
               offset: -50,
-              style: { fontSize: 12, fill: "#6b7280" },
+              style: { fontSize: 12, fill: "#637282" },
             }}
           />
           <YAxis
             yAxisId="left"
-            tick={{ fontSize: 11, fill: "#6b7280" }}
+            tick={{ fontSize: 11, fill: "#637282" }}
             tickLine={false}
             axisLine={false}
             tickFormatter={(v) => v.toLocaleString()}
@@ -400,13 +400,13 @@ function BurdenByAgeChart() {
               angle: -90,
               position: "insideLeft",
               offset: -5,
-              style: { fontSize: 11, fill: "#6b7280" },
+              style: { fontSize: 11, fill: "#637282" },
             }}
           />
           <YAxis
             yAxisId="right"
             orientation="right"
-            tick={{ fontSize: 11, fill: "#6b7280" }}
+            tick={{ fontSize: 11, fill: "#637282" }}
             tickLine={false}
             axisLine={false}
             label={{
@@ -414,7 +414,7 @@ function BurdenByAgeChart() {
               angle: 90,
               position: "insideRight",
               offset: 10,
-              style: { fontSize: 10, fill: "#6b7280" },
+              style: { fontSize: 10, fill: "#637282" },
             }}
           />
           <Tooltip
@@ -435,7 +435,7 @@ function BurdenByAgeChart() {
           <Bar
             yAxisId="left"
             dataKey="value"
-            fill="#7fb3d3"
+            fill="#2F7DC8"
             radius={0}
             name="value"
           />
@@ -443,7 +443,7 @@ function BurdenByAgeChart() {
             yAxisId="right"
             type="monotone"
             dataKey="crudeRate"
-            stroke="#6ab04c"
+            stroke="#1D9E75"
             strokeWidth={2.5}
             dot={{ r: 2 }}
             activeDot={{ r: 4 }}
@@ -500,9 +500,9 @@ function BurdenTop10Chart() {
 
         {/* Two-point age range slider */}
         <div className="flex flex-col gap-2 min-w-[260px]">
-          <label className="text-xs font-medium text-gray-500">
+          <label className="text-xs font-medium text-muted-foreground">
             Select age range:{" "}
-            <span className="text-gray-800 font-semibold">{ageLabel}</span>
+            <span className="text-foreground font-medium">{ageLabel}</span>
           </label>
           <Slider
             min={0}
@@ -513,7 +513,7 @@ function BurdenTop10Chart() {
             minStepsBetweenThumbs={0}
             className="w-full"
           />
-          <div className="flex justify-between text-[10px] text-gray-400">
+          <div className="flex justify-between text-[10px] text-muted-foreground">
             {AGE_GROUP_OPTIONS.map((g) => (
               <span key={g}>{g.replace("Under ", "<")}</span>
             ))}
@@ -529,12 +529,12 @@ function BurdenTop10Chart() {
         >
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="#e5e7eb"
+            stroke="#DDE3EC"
             horizontal={false}
           />
           <XAxis
             type="number"
-            tick={{ fontSize: 11, fill: "#6b7280" }}
+            tick={{ fontSize: 11, fill: "#637282" }}
             tickLine={false}
             axisLine={false}
             tickFormatter={(v) =>
@@ -544,13 +544,13 @@ function BurdenTop10Chart() {
               value: "Disability-adjusted life years (DALY)",
               position: "insideBottom",
               offset: -10,
-              style: { fontSize: 11, fill: "#6b7280" },
+              style: { fontSize: 11, fill: "#637282" },
             }}
           />
           <YAxis
             type="category"
             dataKey="disease"
-            tick={{ fontSize: 11, fill: "#6b7280" }}
+            tick={{ fontSize: 11, fill: "#637282" }}
             tickLine={false}
             axisLine={false}
             width={175}
@@ -561,7 +561,7 @@ function BurdenTop10Chart() {
               "Burden",
             ]}
           />
-          <Bar dataKey="daly" fill="#5f9eaf" radius={0} />
+          <Bar dataKey="daly" fill="#2F7DC8" radius={0} />
         </BarChart>
       </ResponsiveContainer>
     </ChartShell>
@@ -594,8 +594,8 @@ function PrevalenceChart() {
   const activeLines = view === "sex" ? sexLines : ageLines;
   const lineColors =
     view === "sex"
-      ? { Men: "#2b8a9e", Women: "#7fb3d3", Persons: "#6c5b9e" }
-      : { "30–64": "#2b8a9e", "65–84": "#7fb3d3", "85+": "#6c5b9e" };
+      ? { Men: "#0D4F8C", Women: "#6BA3D0", Persons: "#1D9E75" }
+      : { "30–64": "#0D4F8C", "65–84": "#6BA3D0", "85+": "#1D9E75" };
 
   return (
     <ChartShell
@@ -616,14 +616,14 @@ function PrevalenceChart() {
           data={chartData}
           margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#DDE3EC" />
           <XAxis
             dataKey="year"
-            tick={{ fontSize: 11, fill: "#6b7280" }}
+            tick={{ fontSize: 11, fill: "#637282" }}
             tickLine={false}
           />
           <YAxis
-            tick={{ fontSize: 11, fill: "#6b7280" }}
+            tick={{ fontSize: 11, fill: "#637282" }}
             tickLine={false}
             axisLine={false}
             tickFormatter={(v) => `${v}k`}
@@ -632,7 +632,7 @@ function PrevalenceChart() {
               angle: -90,
               position: "insideLeft",
               offset: -10,
-              style: { fontSize: 10, fill: "#9ca3af" },
+              style: { fontSize: 10, fill: "#637282" },
             }}
           />
           <Tooltip formatter={(v: number) => [`${v}k Australians`]} />
@@ -718,14 +718,14 @@ function MortalityChart() {
           data={chartData}
           margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#DDE3EC" />
           <XAxis
             dataKey="year"
-            tick={{ fontSize: 11, fill: "#6b7280" }}
+            tick={{ fontSize: 11, fill: "#637282" }}
             tickLine={false}
           />
           <YAxis
-            tick={{ fontSize: 11, fill: "#6b7280" }}
+            tick={{ fontSize: 11, fill: "#637282" }}
             tickLine={false}
             axisLine={false}
             label={{
@@ -733,7 +733,7 @@ function MortalityChart() {
               angle: -90,
               position: "insideLeft",
               offset: -10,
-              style: { fontSize: 10, fill: "#9ca3af" },
+              style: { fontSize: 10, fill: "#637282" },
             }}
           />
           <Tooltip formatter={(v: number) => [`${v}${tooltipSuffix}`]} />
@@ -741,7 +741,7 @@ function MortalityChart() {
           <Line
             type="monotone"
             dataKey="Men"
-            stroke="#2b8a9e"
+            stroke="#0D4F8C"
             strokeWidth={2}
             dot={{ r: 2.5 }}
             activeDot={{ r: 5 }}
@@ -749,7 +749,7 @@ function MortalityChart() {
           <Line
             type="monotone"
             dataKey="Women"
-            stroke="#7fb3d3"
+            stroke="#6BA3D0"
             strokeWidth={2}
             dot={{ r: 2.5 }}
             activeDot={{ r: 5 }}
@@ -757,7 +757,7 @@ function MortalityChart() {
           <Line
             type="monotone"
             dataKey="Persons"
-            stroke="#6c5b9e"
+            stroke="#1D9E75"
             strokeWidth={2}
             dot={{ r: 2.5 }}
             activeDot={{ r: 5 }}
@@ -774,15 +774,15 @@ function MortalityChart() {
 
 export function Dashboard() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background">
       <Navigation />
 
       <div className="max-w-[1440px] mx-auto px-8 py-12">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-medium text-foreground mb-2">
             Statistics Dashboard
           </h1>
-          <p className="text-gray-700">
+          <p className="text-muted-foreground">
             Australian dementia prevalence and neurological disease burden — live
             data from PostgreSQL
           </p>
@@ -798,10 +798,10 @@ export function Dashboard() {
         {/* Speech Biomarkers Section */}
         <div className="mb-12">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-medium text-foreground mb-2">
               Understanding Speech Biomarkers
             </h2>
-            <p className="text-gray-700 max-w-3xl">
+            <p className="text-muted-foreground max-w-3xl">
               Conversational biomarkers are measurable linguistic and acoustic
               patterns extracted from natural speech. Unlike traditional
               assessments, they can be detected passively during routine
@@ -811,15 +811,17 @@ export function Dashboard() {
 
           {/* Biomarker Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            {biomarkers.map((b) => (
+            {biomarkers.map((b, i) => (
               <div
                 key={b.name}
-                className="bg-white border-2 border-gray-400 p-6"
+                className={`bg-white border border-border rounded-lg py-4 px-6 border-l-[3px] ${
+                  i % 2 === 0 ? "border-l-primary" : "border-l-accent"
+                }`}
               >
-                <h3 className="text-base font-bold text-gray-900 mb-2">
+                <h3 className="text-base font-medium text-foreground mb-2">
                   {b.name}
                 </h3>
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {b.description}
                 </p>
               </div>
@@ -827,12 +829,12 @@ export function Dashboard() {
           </div>
 
           {/* Comparison Table */}
-          <div className="bg-white border-2 border-gray-400">
-            <div className="px-6 py-4 border-b-2 border-gray-300">
-              <h3 className="text-lg font-bold text-gray-900">
+          <div className="bg-white border border-border rounded-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-border">
+              <h3 className="text-lg font-medium text-foreground">
                 How Speech Biomarkers Enhance Traditional Cognitive Assessments
               </h3>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Speech biomarkers work alongside MMSE and MoCA — adding an
                 earlier, passive signal to your existing clinical workflow
               </p>
@@ -840,17 +842,17 @@ export function Dashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b-2 border-gray-300 bg-gray-50">
-                    <th className="text-left px-6 py-3 font-bold text-gray-700 w-1/4">
+                  <tr className="border-b border-border bg-background">
+                    <th className="text-left px-6 py-3 font-medium text-muted-foreground w-1/4">
                       Feature
                     </th>
-                    <th className="text-left px-6 py-3 font-bold text-gray-900 w-1/4">
+                    <th className="text-left px-6 py-3 font-medium text-primary w-1/4">
                       Speech Biomarkers
                     </th>
-                    <th className="text-left px-6 py-3 font-bold text-gray-700 w-1/4">
+                    <th className="text-left px-6 py-3 font-medium text-muted-foreground w-1/4">
                       MMSE
                     </th>
-                    <th className="text-left px-6 py-3 font-bold text-gray-700 w-1/4">
+                    <th className="text-left px-6 py-3 font-medium text-muted-foreground w-1/4">
                       MoCA
                     </th>
                   </tr>
@@ -859,18 +861,18 @@ export function Dashboard() {
                   {comparisonRows.map((row, i) => (
                     <tr
                       key={row.feature}
-                      className={`border-b border-gray-200 ${
-                        i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                      className={`border-b border-border ${
+                        i % 2 === 0 ? "bg-white" : "bg-background"
                       }`}
                     >
-                      <td className="px-6 py-4 font-medium text-gray-900">
+                      <td className="px-6 py-4 font-medium text-foreground">
                         {row.feature}
                       </td>
-                      <td className="px-6 py-4 text-gray-900 font-medium">
+                      <td className="px-6 py-4 text-foreground font-medium">
                         {row.biomarker}
                       </td>
-                      <td className="px-6 py-4 text-gray-600">{row.mmse}</td>
-                      <td className="px-6 py-4 text-gray-600">{row.moca}</td>
+                      <td className="px-6 py-4 text-muted-foreground">{row.mmse}</td>
+                      <td className="px-6 py-4 text-muted-foreground">{row.moca}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -881,7 +883,7 @@ export function Dashboard() {
 
         {/* Attribution */}
         <div className="text-center">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             Data source: Australian Institute of Health and Welfare (AIHW) —
             Dementia in Australia 2022 &amp; Australian Burden of Disease Study
             2024
