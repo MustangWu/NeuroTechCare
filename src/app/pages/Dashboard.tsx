@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Navigation } from "../components/Navigation";
 import { Slider } from "../components/ui/slider";
 import {
+  Tooltip as UITooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "../components/ui/tooltip";
+import {
   ComposedChart,
   LineChart,
   Line,
@@ -241,6 +246,34 @@ const comparisonRows = [
 ];
 
 // ---------------------------------------------------------------------------
+// Metric definitions & info tooltip
+// ---------------------------------------------------------------------------
+
+const METRIC_DEFS = {
+  DALY: "Sum of all disability adjusted life years (DALY)",
+  YLD: "Sum of all years lived with disability (YLD)",
+  YLL: "Sum of all years of life lost (YLL)",
+  crude_daly_rate: "Age-specific DALY rate (per 1,000 population)",
+  crude_yld_rate: "Age-specific YLD rate (per 1,000 population)",
+  crude_yll_rate: "Age-specific YLL rate (per 1,000 population)",
+} as const;
+
+function MetricInfo({ id }: { id: keyof typeof METRIC_DEFS }) {
+  return (
+    <UITooltip>
+      <TooltipTrigger asChild>
+        <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-gray-400 text-gray-400 text-[9px] leading-none cursor-help hover:border-gray-600 hover:text-gray-600 shrink-0 select-none">
+          i
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-[240px] text-center">
+        {METRIC_DEFS[id]}
+      </TooltipContent>
+    </UITooltip>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Graph 1 — Burden of disease by age group (combo bar + line)
 // ---------------------------------------------------------------------------
 
@@ -356,17 +389,26 @@ function BurdenByAgeChart() {
           </label>
           <div className="flex gap-2">
             {(["daly", "yld", "yll"] as const).map((m) => (
-              <FilterBtn
-                key={m}
-                active={measure === m}
-                onClick={() => setMeasure(m)}
-              >
-                {m.toUpperCase()}
-              </FilterBtn>
+              <div key={m} className="flex items-center gap-1">
+                <FilterBtn
+                  active={measure === m}
+                  onClick={() => setMeasure(m)}
+                >
+                  {m.toUpperCase()}
+                </FilterBtn>
+                <MetricInfo id={m.toUpperCase() as "DALY" | "YLD" | "YLL"} />
+              </div>
             ))}
           </div>
         </div>
       </div>
+      <p className="text-[11px] text-gray-400 flex items-center gap-1.5 -mt-3 mb-4">
+        <MetricInfo id={`crude_${measure}_rate` as keyof typeof METRIC_DEFS} />
+        <span>
+          Crude rate (right axis):{" "}
+          {METRIC_DEFS[`crude_${measure}_rate` as keyof typeof METRIC_DEFS]}
+        </span>
+      </p>
 
       {/* Combo chart: Bar (DALY) + Line (Crude rate) */}
       <ResponsiveContainer width="100%" height={380}>
@@ -520,6 +562,10 @@ function BurdenTop10Chart() {
           </div>
         </div>
       </div>
+      <p className="text-[11px] text-gray-400 flex items-center gap-1.5 mb-4">
+        <MetricInfo id="DALY" />
+        <span>DALY: {METRIC_DEFS.DALY}</span>
+      </p>
 
       <ResponsiveContainer width="100%" height={360}>
         <BarChart
@@ -604,13 +650,14 @@ function PrevalenceChart() {
       loading={loading}
       error={error}
     >
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-2">
         {(["sex", "age"] as const).map((v) => (
           <FilterBtn key={v} active={view === v} onClick={() => setView(v)}>
             {v === "sex" ? "By Sex" : "By Age Group"}
           </FilterBtn>
         ))}
       </div>
+      {view === "age" && <div className="mb-4" />}
       <ResponsiveContainer width="100%" height={340}>
         <LineChart
           data={chartData}
@@ -698,7 +745,7 @@ function MortalityChart() {
       loading={loading}
       error={error}
     >
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-2">
         {(["deaths", "asr", "crude"] as const).map((m) => (
           <FilterBtn
             key={m}
