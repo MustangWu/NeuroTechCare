@@ -1,6 +1,7 @@
 import { Navigation } from "../components/Navigation";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { Check } from "lucide-react";
 
 const MAX_FILE_SIZE_MB = 100;
 const ACCEPTED_FORMATS = [".mp3", ".wav", ".m4a"];
@@ -89,163 +90,158 @@ export function Upload() {
       return;
     }
     setIsSubmitting(true);
-    // Simulated upload delay — replace with real API call
     await new Promise((r) => setTimeout(r, 1800));
     navigate("/results");
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Navigation />
 
-      <div className="max-w-[1440px] mx-auto px-8 py-12">
-        <div className="max-w-2xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Upload Patient Recording
-            </h1>
-            <p className="text-gray-700">
-              Upload a consultation audio file for speech biomarker analysis
-            </p>
+      <div className="max-w-3xl mx-auto px-6 py-12">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl text-gray-900 mb-2">Upload Patient Recording</h1>
+          <p className="text-gray-600">
+            Upload a consultation audio file for speech biomarker analysis
+          </p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} noValidate className="bg-white rounded-lg p-8">
+
+          {/* Patient ID + Recording Date */}
+          <div className="grid grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-sm mb-2">
+                Patient ID <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={patientId}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^A-Za-z0-9]/g, "");
+                  setPatientId(val);
+                  if (val.trim()) setErrors((prev) => ({ ...prev, patientId: undefined }));
+                }}
+                placeholder="e.g., PT2024001"
+                className={`w-full px-4 py-3 border rounded-lg ${errors.patientId ? "border-red-500 bg-red-50" : "border-gray-300"}`}
+              />
+              {errors.patientId && (
+                <p className="mt-1.5 text-xs text-red-600">{errors.patientId}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm mb-2">
+                Recording Date <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                value={recordingDate}
+                max={new Date().toISOString().split("T")[0]}
+                onChange={(e) => {
+                  setRecordingDate(e.target.value);
+                  if (e.target.value) setErrors((prev) => ({ ...prev, recordingDate: undefined }));
+                }}
+                className={`w-full px-4 py-3 border rounded-lg ${errors.recordingDate ? "border-red-500 bg-red-50" : "border-gray-300"}`}
+              />
+              {errors.recordingDate && (
+                <p className="mt-1.5 text-xs text-red-600">{errors.recordingDate}</p>
+              )}
+            </div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} noValidate className="bg-white border-2 border-gray-400 p-8">
-
-            {/* Patient ID + Recording Date */}
-            <div className="grid grid-cols-2 gap-6 mb-6">
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">
-                  Patient ID *
-                </label>
-                <input
-                  type="text"
-                  value={patientId}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/[^A-Za-z0-9]/g, "");
-                    setPatientId(val);
-                    if (val.trim()) setErrors((prev) => ({ ...prev, patientId: undefined }));
-                  }}
-                  placeholder="e.g., PT2024001"
-                  className={`w-full border-2 px-4 py-3 ${errors.patientId ? "border-red-500 bg-red-50" : "border-gray-400"}`}
-                />
-                {errors.patientId && (
-                  <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.patientId}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">
-                  Recording Date *
-                </label>
-                <input
-                  type="date"
-                  value={recordingDate}
-                  max={new Date().toISOString().split("T")[0]}
-                  onChange={(e) => {
-                    setRecordingDate(e.target.value);
-                    if (e.target.value) setErrors((prev) => ({ ...prev, recordingDate: undefined }));
-                  }}
-                  className={`w-full border-2 px-4 py-3 ${errors.recordingDate ? "border-red-500 bg-red-50" : "border-gray-400"}`}
-                />
-                {errors.recordingDate && (
-                  <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.recordingDate}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Audio Upload Zone */}
-            <div className="mb-6">
-              <label className="block text-sm font-bold text-gray-900 mb-2">
-                Audio File *
-              </label>
-              <div
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`border-4 p-16 text-center transition-colors ${
-                  errors.file
-                    ? "border-dashed border-red-400 bg-red-50"
-                    : isDragging
-                    ? "border-gray-900 bg-gray-200"
-                    : file
-                    ? "border-gray-600 bg-gray-100"
-                    : "border-dashed border-gray-400 bg-gray-50"
-                }`}
-              >
-                <input
-                  type="file"
-                  accept=".mp3,.wav,.m4a,audio/*"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                  id="audio-upload"
-                />
-                <label htmlFor="audio-upload" className="cursor-pointer">
-                  {file ? (
-                    <div className="flex flex-col items-center">
-                      <div className="w-16 h-16 bg-gray-400 border-2 border-gray-500 mb-4" />
-                      <p className="text-lg font-bold text-gray-900 mb-1">{file.name}</p>
-                      <p className="text-sm text-gray-600 mb-2">{formatFileSize(file.size)}</p>
-                      <p className="text-sm text-gray-700">Click to change file</p>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center">
-                      <div className="w-16 h-16 bg-gray-300 border-2 border-gray-400 mb-4" />
-                      <p className="text-lg font-bold text-gray-900 mb-2">
-                        Drag and drop your audio file here
-                      </p>
-                      <p className="text-sm text-gray-700 mb-4">or click to browse files</p>
-                      <p className="text-xs text-gray-600">
-                        Supported formats: MP3, WAV, M4A &nbsp;·&nbsp; Max {MAX_FILE_SIZE_MB} MB
-                      </p>
-                    </div>
-                  )}
-                </label>
-              </div>
-              {errors.file && (
-                <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.file}</p>
-              )}
-            </div>
-
-            {/* Consent Checkbox */}
-            <div className={`mb-8 p-5 border-2 ${errors.consent ? "border-red-400 bg-red-50" : "border-gray-300 bg-gray-100"}`}>
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={consentChecked}
-                  onChange={(e) => {
-                    setConsentChecked(e.target.checked);
-                    if (e.target.checked) setErrors((prev) => ({ ...prev, consent: undefined }));
-                  }}
-                  className="w-5 h-5 mt-0.5 border-2 border-gray-400"
-                />
-                <div className="flex-1">
-                  <span className="text-sm text-gray-900">
-                    I confirm that informed consent has been obtained from the patient for this
-                    recording to be used for clinical assessment purposes. *
-                  </span>
-                  <p className="text-xs text-gray-700 mt-1">
-                    This recording will be processed in accordance with Australian privacy
-                    legislation and RACGP guidelines.
-                  </p>
-                </div>
-              </label>
-              {errors.consent && (
-                <p className="mt-2 text-xs text-red-600 font-medium">{errors.consent}</p>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-4 px-6 font-bold text-lg border-2 bg-gray-800 text-white border-gray-900 disabled:opacity-60 disabled:cursor-not-allowed"
+          {/* Audio Upload Zone */}
+          <div className="mb-6">
+            <label className="block text-sm mb-2">
+              Audio File <span className="text-red-500">*</span>
+            </label>
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
+                errors.file
+                  ? "border-red-400 bg-red-50"
+                  : isDragging
+                  ? "border-blue-400 bg-blue-50"
+                  : file
+                  ? "border-green-400 bg-green-50"
+                  : "border-gray-300 bg-gray-50"
+              }`}
             >
-              {isSubmitting ? "Analysing…" : "Upload & Analyse"}
-            </button>
-          </form>
-        </div>
+              <input
+                type="file"
+                accept=".mp3,.wav,.m4a,audio/*"
+                onChange={handleFileSelect}
+                className="hidden"
+                id="audio-upload"
+              />
+              <label htmlFor="audio-upload" className="cursor-pointer">
+                {file ? (
+                  <div className="flex flex-col items-center">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                      <Check className="w-6 h-6 text-green-600" />
+                    </div>
+                    <p className="text-gray-900 mb-1">{file.name}</p>
+                    <p className="text-sm text-gray-500 mb-2">{formatFileSize(file.size)}</p>
+                    <p className="text-sm text-blue-600 hover:underline">Click to change file</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center">
+                    <p className="text-gray-900 mb-2">
+                      Drag and drop your audio file here
+                    </p>
+                    <p className="text-sm text-gray-600 mb-4">or click to browse files</p>
+                    <p className="text-xs text-gray-500">
+                      Supported formats: MP3, WAV, M4A &nbsp;·&nbsp; Max {MAX_FILE_SIZE_MB} MB
+                    </p>
+                  </div>
+                )}
+              </label>
+            </div>
+            {errors.file && (
+              <p className="mt-1.5 text-xs text-red-600">{errors.file}</p>
+            )}
+          </div>
+
+          {/* Consent Checkbox */}
+          <div className="mb-8">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={consentChecked}
+                onChange={(e) => {
+                  setConsentChecked(e.target.checked);
+                  if (e.target.checked) setErrors((prev) => ({ ...prev, consent: undefined }));
+                }}
+                className="mt-1 w-4 h-4"
+              />
+              <span className="text-sm text-gray-900">
+                I confirm that informed consent has been obtained from the patient for this
+                recording to be used for clinical assessment purposes.{" "}
+                <span className="text-red-500">*</span>
+                <div className="text-xs text-gray-500 mt-1">
+                  This recording will be processed in accordance with Australian privacy
+                  legislation and RACGP guidelines.
+                </div>
+              </span>
+            </label>
+            {errors.consent && (
+              <p className="mt-2 text-xs text-red-600">{errors.consent}</p>
+            )}
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-[#2d5a8f] text-white py-3 rounded-lg hover:bg-[#234a75] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? "Analysing…" : "Upload & Analyse"}
+          </button>
+        </form>
       </div>
     </div>
   );

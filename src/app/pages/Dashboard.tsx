@@ -97,8 +97,8 @@ function ChartShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white p-8 border-2 border-gray-400">
-      <h2 className="text-xl font-bold text-gray-900 mb-1">{title}</h2>
+    <div className="bg-white rounded-lg p-8">
+      <h2 className="text-xl text-gray-900 mb-1">{title}</h2>
       <p className="text-sm text-gray-600 mb-6">{subtitle}</p>
       {loading && (
         <div className="h-64 flex items-center justify-center text-gray-400 text-sm">
@@ -129,11 +129,11 @@ function FilterSelect({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-xs font-medium text-gray-500">{label}</label>
+      <label className="text-xs text-gray-600">{label}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="border border-gray-300 rounded px-2 py-1 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-gray-400 min-w-[130px]"
+        className="border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-300 min-w-[130px]"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -158,10 +158,10 @@ function FilterBtn({
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-1 text-xs font-medium border-2 transition-colors ${
+      className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
         active
-          ? "bg-gray-900 text-white border-gray-900"
-          : "bg-white text-gray-600 border-gray-400 hover:border-gray-600"
+          ? "bg-[#2d5a8f] text-white"
+          : "bg-white text-gray-600 border border-gray-300 hover:border-gray-400"
       }`}
     >
       {children}
@@ -337,7 +337,7 @@ function BurdenByAgeChart() {
         ].map(({ label, val, color }) => (
           <div
             key={label}
-            className="border border-gray-300 rounded p-4 text-center"
+            className="border border-gray-200 rounded-lg p-4 text-center bg-gray-50"
           >
             <p className="text-xs text-gray-500 mb-1">
               In {year},{" "}
@@ -821,14 +821,14 @@ function MortalityChart() {
 
 export function Dashboard() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Navigation />
 
-      <div className="max-w-[1440px] mx-auto px-8 py-12">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Speech Biomarkers Section */}
         <div className="mb-12">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl text-gray-900 mb-2">
               Understanding Speech Biomarkers
             </h2>
             <p className="text-gray-700 max-w-3xl">
@@ -844,12 +844,12 @@ export function Dashboard() {
             {biomarkers.map((b) => (
               <div
                 key={b.name}
-                className="bg-white border-2 border-gray-400 p-6"
+                className="bg-white rounded-lg p-6"
               >
-                <h3 className="text-base font-bold text-gray-900 mb-2">
+                <h3 className="text-base text-gray-900 mb-2">
                   {b.name}
                 </h3>
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <p className="text-sm text-gray-600 leading-relaxed">
                   {b.description}
                 </p>
               </div>
@@ -857,9 +857,9 @@ export function Dashboard() {
           </div>
 
           {/* Comparison Table */}
-          <div className="bg-white border-2 border-gray-400">
-            <div className="px-6 py-4 border-b-2 border-gray-300">
-              <h3 className="text-lg font-bold text-gray-900">
+          <div className="bg-white rounded-lg">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg text-gray-900">
                 How Speech Biomarkers Enhance Traditional Cognitive Assessments
               </h3>
               <p className="text-sm text-gray-600 mt-1">
@@ -870,17 +870,17 @@ export function Dashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b-2 border-gray-300 bg-gray-50">
-                    <th className="text-left px-6 py-3 font-bold text-gray-700 w-1/4">
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left px-6 py-3 text-gray-700 w-1/4">
                       Feature
                     </th>
-                    <th className="text-left px-6 py-3 font-bold text-gray-900 w-1/4">
+                    <th className="text-left px-6 py-3 text-gray-900 w-1/4">
                       Speech Biomarkers
                     </th>
-                    <th className="text-left px-6 py-3 font-bold text-gray-700 w-1/4">
+                    <th className="text-left px-6 py-3 text-gray-700 w-1/4">
                       MMSE
                     </th>
-                    <th className="text-left px-6 py-3 font-bold text-gray-700 w-1/4">
+                    <th className="text-left px-6 py-3 text-gray-700 w-1/4">
                       MoCA
                     </th>
                   </tr>
@@ -893,10 +893,10 @@ export function Dashboard() {
                         i % 2 === 0 ? "bg-white" : "bg-gray-50"
                       }`}
                     >
-                      <td className="px-6 py-4 font-medium text-gray-900">
+                      <td className="px-6 py-4 text-gray-900">
                         {row.feature}
                       </td>
-                      <td className="px-6 py-4 text-gray-900 font-medium">
+                      <td className="px-6 py-4 text-gray-900">
                         {row.biomarker}
                       </td>
                       <td className="px-6 py-4 text-gray-600">{row.mmse}</td>
@@ -910,10 +910,10 @@ export function Dashboard() {
         </div>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl text-gray-900 mb-2">
             Statistics Dashboard
           </h1>
-          <p className="text-gray-700">
+          <p className="text-sm text-gray-600">
             Australian dementia prevalence and neurological disease burden — live
             data from PostgreSQL
           </p>
