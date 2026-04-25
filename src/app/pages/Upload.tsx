@@ -157,8 +157,19 @@ export function Upload() {
           return;
         }
       }
-      // Simulated upload delay — replace with real multipart upload to /api/recordings
-      await new Promise((r) => setTimeout(r, 1800));
+
+      const formData = new FormData();
+      formData.append("patient_id", patientId.trim());
+      formData.append("recording_date", recordingDate);
+      formData.append("audio", file!);
+
+      const uploadRes = await fetch("/api/recordings", { method: "POST", body: formData });
+      if (!uploadRes.ok) {
+        const err = await uploadRes.json();
+        setErrors((prev) => ({ ...prev, file: err.error || "Upload failed. Please try again." }));
+        setIsSubmitting(false);
+        return;
+      }
       navigate("/results");
     } catch {
       setErrors((prev) => ({ ...prev, patientId: "Network error. Please try again." }));

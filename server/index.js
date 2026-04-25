@@ -4,6 +4,7 @@ import pg from "pg";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import multer from "multer";
 
 dotenv.config();
 
@@ -26,6 +27,40 @@ const pool = process.env.DATABASE_URL
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 100 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("audio/")) cb(null, true);
+    else cb(new Error("Invalid file type. Only audio files are accepted."));
+  },
+});
+
+// ML inference stub — replace EC2_ENDPOINT with actual URL when available
+const EC2_ENDPOINT = process.env.EC2_ENDPOINT || null;
+
+async function callMLInference(audioBuffer, filename) {
+  if (EC2_ENDPOINT) {
+    const formData = new FormData();
+    formData.append("audio", new Blob([audioBuffer]), filename);
+    const response = await fetch(EC2_ENDPOINT, { method: "POST", body: formData });
+    if (!response.ok) throw new Error(`ML inference failed: ${response.statusText}`);
+    return await response.json();
+  }
+  // Stub: returns mock data until EC2 endpoint is ready
+  return {
+    text_transcript: "[Whisper transcript — pending EC2 integration]",
+    mlu_score: 8.5,
+    pause_ratio: 0.12,
+    type_token_ratio: 0.65,
+    filler_word_count: 3,
+    syntactic_complexity: 2.1,
+    dementia_risk_level: "Low Risk",
+    confidence_score: 0.82,
+    trend_direction: "stable",
+  };
+}
 
 // Lookup: distinct neurological conditions for the dropdown
 app.get("/api/neurological-conditions", async (_req, res) => {
@@ -170,6 +205,106 @@ app.get("/api/dementia-mortality", async (_req, res) => {
       FROM dementia_mortality
       ORDER BY year
     `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+// Upload audio, run ML inference, store results
+app.post("/api/recordings", upload.single("audio"), async (req, res) => {
+  const { patient_id, recording_date } = req.body;
+  const audioFile = req.file;
+
+  if (!patient_id || !audioFile) {
+    return res.status(400).json({ error: "patient_id and audio file are required" });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const mlResult = await callMLInference(audioFile.buffer, audioFile.originalname);
+
+    const { rows: [rec] } = await client.query(
+      `INSERT INTO recording (recording_date, text_transcript, patient_id)
+       VALUES ($1, $2, $3) RETURNING recording_id`,
+      [recording_date || new Date().toISOString().split("T")[0], mlResult.text_transcript, patient_id]
+    );
+
+    const { rows: [analysis] } = await client.query(
+      `INSERT INTO biomarker_analysis
+         (mlu_score, pause_ratio, type_token_ratio, filler_word_count, syntactic_complexity, recording_id, patient_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING analysis_id`,
+      [mlResult.mlu_score, mlResult.pause_ratio, mlResult.type_token_ratio,
+       mlResult.filler_word_count, mlResult.syntactic_complexity, rec.recording_id, patient_id]
+    );
+
+    await client.query(
+      `INSERT INTO risk_assessment (dementia_risk_level, confidence_score, trend_direction, analysis_id)
+       VALUES ($1, $2, $3, $4)`,
+      [mlResult.dementia_risk_level, mlResult.confidence_score, mlResult.trend_direction, analysis.analysis_id]
+    );
+
+    // Keep patient's current risk_level and last_visit up to date
+    await client.query(
+      `UPDATE patient SET risk_level = $1, last_visit = $2 WHERE patient_id = $3`,
+      [mlResult.dementia_risk_level, recording_date || new Date().toISOString().split("T")[0], patient_id]
+    );
+
+    await client.query("COMMIT");
+
+    res.status(201).json({
+      recording_id: rec.recording_id,
+      analysis_id: analysis.analysis_id,
+      transcript: mlResult.text_transcript,
+      biomarkers: {
+        mlu_score: mlResult.mlu_score,
+        pause_ratio: mlResult.pause_ratio,
+        type_token_ratio: mlResult.type_token_ratio,
+        filler_word_count: mlResult.filler_word_count,
+        syntactic_complexity: mlResult.syntactic_complexity,
+      },
+      risk: {
+        dementia_risk_level: mlResult.dementia_risk_level,
+        confidence_score: mlResult.confidence_score,
+        trend_direction: mlResult.trend_direction,
+      },
+    });
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error(err);
+    res.status(500).json({ error: "Failed to process recording" });
+  } finally {
+    client.release();
+  }
+});
+
+// Patient biomarker history (JOIN query — no separate history table needed)
+app.get("/api/patients/:patientId/history", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT
+         BA.analysis_id,
+         BA.analysis_timestamp,
+         BA.mlu_score,
+         BA.pause_ratio,
+         BA.type_token_ratio,
+         BA.filler_word_count,
+         BA.syntactic_complexity,
+         RA.dementia_risk_level,
+         RA.confidence_score,
+         RA.trend_direction,
+         R.recording_date,
+         R.text_transcript
+       FROM biomarker_analysis BA
+       JOIN risk_assessment RA ON BA.analysis_id = RA.analysis_id
+       JOIN recording R ON BA.recording_id = R.recording_id
+       WHERE BA.patient_id = $1
+       ORDER BY BA.analysis_timestamp DESC`,
+      [req.params.patientId]
+    );
     res.json(result.rows);
   } catch (err) {
     console.error(err);
