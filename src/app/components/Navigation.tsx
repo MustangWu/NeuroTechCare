@@ -16,9 +16,9 @@ export function Navigation() {
         <nav className="flex items-center gap-6">
           <Link
             to="/dashboard"
-            className={`text-sm ${
+            className={`text-sm pb-1 ${
               location.pathname === "/dashboard"
-                ? "text-gray-900 font-medium"
+                ? "text-gray-900 font-medium border-b-2 border-blue-600"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -36,9 +36,9 @@ export function Navigation() {
           </Link>
           <Link
             to="/"
-            className={`text-sm ${
+            className={`text-sm pb-1 ${
               location.pathname === "/"
-                ? "text-gray-900 font-medium"
+                ? "text-gray-900 font-medium border-b-2 border-blue-600"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
