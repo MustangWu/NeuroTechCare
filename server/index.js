@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import multer from "multer";
-import OpenAI, { toFile } from "openai";
+import { ElevenLabsClient } from "elevenlabs";
 
 dotenv.config();
 
@@ -39,15 +39,47 @@ const upload = multer({
 });
 
 const EC2_ENDPOINT = process.env.EC2_ENDPOINT || null;
-const openai = process.env.OPENAI_API_KEY
-  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+const elevenlabs = process.env.ELEVENLABS_API_KEY
+  ? new ElevenLabsClient({ apiKey: process.env.ELEVENLABS_API_KEY })
   : null;
 
+function formatTimestamp(seconds) {
+  const h = Math.floor(seconds / 3600).toString().padStart(2, "0");
+  const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, "0");
+  const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+  return `${h}:${m}:${s}`;
+}
+
+function buildTimestampedTranscript(words) {
+  const segments = [];
+  let current = null;
+
+  for (const word of words) {
+    if (word.type !== "word") continue;
+    if (!current) {
+      current = { start: word.start, end: word.end, words: [word.text] };
+    } else if (word.start - current.end > 1.5) {
+      segments.push(current);
+      current = { start: word.start, end: word.end, words: [word.text] };
+    } else {
+      current.end = word.end;
+      current.words.push(word.text);
+    }
+  }
+  if (current) segments.push(current);
+
+  return segments
+    .map(s => `[${formatTimestamp(s.start)} - ${formatTimestamp(s.end)}] ${s.words.join(" ")}`)
+    .join("\n");
+}
+
 async function transcribeAudio(audioBuffer, filename) {
-  if (!openai) return "[Whisper transcript — OPENAI_API_KEY not set]";
-  const file = await toFile(audioBuffer, filename);
-  const result = await openai.audio.transcriptions.create({ file, model: "whisper-1" });
-  return result.text;
+  if (!elevenlabs) return "[Transcript — ELEVENLABS_API_KEY not set]";
+  const result = await elevenlabs.speechToText.convert({
+    file: new Blob([audioBuffer], { type: "audio/wav" }),
+    model_id: "scribe_v1",
+  });
+  return result.words?.length ? buildTimestampedTranscript(result.words) : result.text;
 }
 
 async function callMLInference(audioBuffer, filename) {
@@ -57,7 +89,7 @@ async function callMLInference(audioBuffer, filename) {
     const response = await fetch(EC2_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: text_transcript }),
+      body: JSON.stringify({ prompt: text_transcript, max_new_tokens: 300 }),
     });
     if (!response.ok) throw new Error(`ML inference failed: ${response.statusText}`);
     const mlResult = await response.json();
