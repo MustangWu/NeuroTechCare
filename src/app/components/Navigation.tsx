@@ -35,6 +35,16 @@ export function Navigation() {
             Upload
           </Link>
           <Link
+            to="/results"
+            className={`text-sm pb-1 ${
+              location.pathname === "/results"
+                ? "text-gray-900 font-medium border-b-2 border-blue-600"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            Results
+          </Link>
+          <Link
             to="/"
             className={`text-sm pb-1 ${
               location.pathname === "/"
