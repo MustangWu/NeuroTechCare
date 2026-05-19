@@ -228,9 +228,23 @@ export function Upload() {
 
           {/* Select Care Recipient */}
           <div className="mb-6">
-            <label className="block text-sm mb-2">
-              Select Care Recipient <span className="text-red-500">*</span>
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm">
+                Select Care Recipient <span className="text-red-500">*</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAddNew(!showAddNew);
+                  setSelectedPersonId("");
+                  setErrors((prev) => ({ ...prev, personId: undefined }));
+                }}
+                className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Add New Care Recipient
+              </button>
+            </div>
             <select
               value={selectedPersonId}
               disabled={showAddNew || personsLoading}
@@ -251,19 +265,6 @@ export function Upload() {
             {errors.personId && !showAddNew && (
               <p className="mt-1.5 text-xs text-red-600">{errors.personId}</p>
             )}
-
-            <button
-              type="button"
-              onClick={() => {
-                setShowAddNew(!showAddNew);
-                setSelectedPersonId("");
-                setErrors((prev) => ({ ...prev, personId: undefined }));
-              }}
-              className="mt-2 flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Add New Care Recipient
-            </button>
           </div>
 
           {/* New Care Recipient inline form */}
@@ -430,6 +431,15 @@ export function Upload() {
           >
             {isSubmitting ? "Analysing…" : "Upload & Analyse"}
           </button>
+
+          {isSubmitting && (
+            <div className="mt-4 flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
+              <div className="mt-0.5 shrink-0 w-4 h-4 border-2 border-[#2d5a8f] border-t-transparent rounded-full animate-spin" />
+              <p className="text-sm text-blue-800">
+                <span className="font-medium">Analysis in progress.</span> AI speech analysis typically takes 1–3 minutes. Please keep this page open and do not refresh.
+              </p>
+            </div>
+          )}
 
           <div className="relative flex items-center gap-3 my-1">
             <div className="flex-1 h-px bg-gray-200" />

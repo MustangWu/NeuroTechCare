@@ -1,7 +1,7 @@
 import { Navigation } from "../components/Navigation";
-import { Download, FileText, UploadCloud } from "lucide-react";
+import { Download, FileText, UploadCloud, Info } from "lucide-react";
 import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import jsPDF from "jspdf";
 import { toast } from "sonner";
 import { useSession, type AnalysisResult } from "../context/SessionContext";
@@ -253,10 +253,50 @@ function EmptyState() {
   );
 }
 
+const RISK_CTA: Record<string, { heading: string; points: string[]; color: string }> = {
+  high: {
+    heading: "Recommended Next Steps — High Risk",
+    points: [
+      "Refer to a specialist (geriatrician or neurologist) for a comprehensive cognitive assessment.",
+      "Discuss findings with the care recipient's GP as soon as possible.",
+      "Explore support services through Dementia Australia (1800 100 500).",
+      "Schedule a follow-up recording in 4–6 weeks to monitor changes.",
+    ],
+    color: "bg-red-50 border-red-200 text-red-900",
+  },
+  moderate: {
+    heading: "Recommended Next Steps — Moderate Risk",
+    points: [
+      "Share results with the care recipient's GP for further evaluation.",
+      "Encourage brain-healthy lifestyle habits: exercise, social engagement, and quality sleep.",
+      "Monitor closely and schedule a follow-up recording in 8–12 weeks.",
+      "Consider a referral if scores worsen over time.",
+    ],
+    color: "bg-amber-50 border-amber-200 text-amber-900",
+  },
+  low: {
+    heading: "Recommended Next Steps — Low Risk",
+    points: [
+      "Continue regular monitoring with periodic recordings every 3–6 months.",
+      "Maintain brain-healthy lifestyle habits to support long-term cognitive health.",
+      "No urgent clinical action required at this time.",
+    ],
+    color: "bg-blue-50 border-blue-200 text-blue-900",
+  },
+};
+
+function getRiskCtaKey(level: string): "high" | "moderate" | "low" {
+  const l = level.toLowerCase();
+  if (l.includes("high")) return "high";
+  if (l.includes("moderate")) return "moderate";
+  return "low";
+}
+
 export function Results() {
-  const { sessionData, setSessionData, clearSession, savedAnalysisId } = useSession();
+  const { sessionData, setSessionData, savedAnalysisId } = useSession();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const biomarkerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (sessionData || !savedAnalysisId) return;
@@ -300,23 +340,23 @@ export function Results() {
           <EmptyState />
         ) : (
           <>
-            <div className="flex items-center justify-between mb-8">
-  <div>
-    <h1 className="text-3xl text-gray-900 mb-2">Analysis Results</h1>
-    <p className="text-gray-600 leading-relaxed">
-      Care Recipient: {s.personName} ({s.personId})
-      <br />
-      Recording Date: {formatDate(s.recordingDate)}
-    </p>
-  </div>
-  <div
-    className={`inline-flex w-fit px-8 py-4 rounded-2xl text-xl font-semibold shrink-0 ${riskStyles(s.dementia_risk_level)}`}
-    role="status"
-  >
-    {s.dementia_risk_level}
-  </div>
-</div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
+              <div>
+                <h1 className="text-3xl text-gray-900 mb-2">Analysis Results</h1>
+                <p className="text-gray-600 leading-relaxed">
+                  Care Recipient: {s.personName} ({s.personId})
+                  <br />
+                  Recording Date: {formatDate(s.recordingDate)}
+                </p>
+              </div>
+              <div
+                className={`inline-flex w-fit px-6 py-3 rounded-2xl text-lg font-semibold shrink-0 ${riskStyles(s.dementia_risk_level)}`}
+                role="status"
+              >
+                {s.dementia_risk_level}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
               <div className="lg:col-span-2 space-y-6">
                 <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
                   <h2 className="text-xl text-gray-900 mb-4">Transcript</h2>
@@ -336,7 +376,6 @@ export function Results() {
                 </div>
 
                 <div className="flex flex-wrap gap-4">
-  
                   <button
                     type="button"
                     onClick={() => exportToPDF(s)}
@@ -347,20 +386,27 @@ export function Results() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      clearSession();
-                      toast.success("Session cleared. Ready for a new recording.");
-                      navigate("/upload");
-                    }}
+                    onClick={() => navigate("/upload")}
                     className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
                   >
                     <UploadCloud className="w-5 h-5" />
-                    Clear Session
+                    New Recording
                   </button>
                 </div>
               </div>
 
               <div className="space-y-4">
+                <div className="flex items-center justify-between mb-1">
+                  <h2 className="text-base font-medium text-gray-700">Speech Biomarker Scores</h2>
+                  <button
+                    type="button"
+                    onClick={() => biomarkerRef.current?.scrollIntoView({ behavior: "smooth" })}
+                    className="flex items-center gap-1 text-xs text-[#2d5a8f] hover:underline"
+                  >
+                    <Info className="w-3.5 h-3.5" />
+                    Learn More
+                  </button>
+                </div>
                 {FOUR_METRICS.map((key) => {
                   const v = s[key] as number;
                   const f = formatMetricValue(key, v);
@@ -395,8 +441,26 @@ export function Results() {
               </div>
             </div>
 
+            {/* Risk CTA */}
+            {(() => {
+              const cta = RISK_CTA[getRiskCtaKey(s.dementia_risk_level)];
+              return (
+                <div className={`mt-8 rounded-lg border p-6 ${cta.color}`}>
+                  <h2 className="text-base font-semibold mb-3">{cta.heading}</h2>
+                  <ul className="space-y-2">
+                    {cta.points.map((point, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm">
+                        <span className="mt-1 shrink-0 w-1.5 h-1.5 rounded-full bg-current opacity-60" />
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })()}
+
             {s.biomarker_summaries && (
-              <div className="mt-10">
+              <div className="mt-10" ref={biomarkerRef}>
                 <h2 className="text-2xl text-gray-900 mb-6">Explainable AI Biomarker Summaries</h2>
                 <div className="bg-white rounded-lg p-6 space-y-8 shadow-sm border border-gray-100">
                   {FOUR_METRICS.map((key) => {
