@@ -10,20 +10,18 @@ export function Landing() {
 
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Hero Section */}
-        <div className="bg-white rounded-lg p-12 mb-12 flex items-center justify-between">
-          <div className="max-w-xl">
-            <h1 className="text-4xl text-gray-900 mb-4">
+        <div className="bg-white rounded-lg p-8 md:p-12 mb-12 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="max-w-xl w-full">
+            <h1 className="text-3xl md:text-4xl text-gray-900 mb-4">
               Listen Closer: Understand the Changes Before They Become Challenges
             </h1>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4">
               Early Dementia Detection Through the Power of Voice
             </h2>
             <p className="text-gray-600 mb-8">
-              LLM-Powered Speech Biomarkers for Early Dementia Detection
-              Empower your clinical practice with cutting-edge speech analysis technology.
-              Detect cognitive decline, make confident referrals, and improve person outcomes.
+              CogniTrack uses AI to analyse speech patterns and help identify early signs of cognitive decline — giving carers and clinicians the insight they need to act sooner, with confidence.
             </p>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               <Link
                 to="/upload"
                 className="bg-[#2d5a8f] text-white px-6 py-3 rounded-lg hover:bg-[#234a75] transition-colors"
@@ -34,11 +32,11 @@ export function Landing() {
                 to="/dashboard"
                 className="border border-gray-300 text-gray-900 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                View Dashboard
+                Learn More
               </Link>
             </div>
           </div>
-          <div className="w-80 shrink-0">
+          <div className="hidden md:block w-72 shrink-0">
             <img
               src={dementiaImg}
               alt="Healthcare illustration"
@@ -48,7 +46,7 @@ export function Landing() {
         </div>
 
         {/* Key Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
           <div className="bg-white rounded-lg p-6">
             <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mb-4">
               <UserCircle className="w-6 h-6 text-[#2d5a8f]" />
@@ -81,7 +79,7 @@ export function Landing() {
         <div className="mb-16">
           <h2 className="text-3xl text-center text-gray-900 mb-12">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="text-center">
+            <div className="text-center flex flex-col items-center">
               <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Upload className="w-8 h-8 text-[#2d5a8f]" />
               </div>
@@ -89,12 +87,18 @@ export function Landing() {
                 1
               </div>
               <h3 className="text-gray-900 mb-2">Upload Recording</h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 mb-4">
                 Upload a simple conversation audio file from your clinical encounter
               </p>
+              <Link
+                to="/upload"
+                className="mt-auto text-sm text-[#2d5a8f] border border-[#2d5a8f] px-4 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
+              >
+                Go to Upload
+              </Link>
             </div>
 
-            <div className="text-center">
+            <div className="text-center flex flex-col items-center">
               <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Activity className="w-8 h-8 text-[#2d5a8f]" />
               </div>
@@ -102,12 +106,18 @@ export function Landing() {
                 2
               </div>
               <h3 className="text-gray-900 mb-2">AI Analysis</h3>
-              <p className="text-sm text-gray-600">
-                Our AI extracts speech biomarkers like pause length, lexical diversity, and word choice
+              <p className="text-sm text-gray-600 mb-4">
+                Our AI analyses speech patterns like pause length, vocabulary range, and word choice
               </p>
+              <Link
+                to="/upload"
+                className="mt-auto text-sm text-[#2d5a8f] border border-[#2d5a8f] px-4 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
+              >
+                Start Analysis
+              </Link>
             </div>
 
-            <div className="text-center">
+            <div className="text-center flex flex-col items-center">
               <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <ClipboardList className="w-8 h-8 text-[#2d5a8f]" />
               </div>
@@ -115,22 +125,34 @@ export function Landing() {
                 3
               </div>
               <h3 className="text-gray-900 mb-2">Get Results</h3>
-              <p className="text-sm text-gray-600">
-                Review results instantly with clinical context and next steps
+              <p className="text-sm text-gray-600 mb-4">
+                Review results instantly with plain-language summaries and suggested next steps
               </p>
+              <Link
+                to="/results"
+                className="mt-auto text-sm text-[#2d5a8f] border border-[#2d5a8f] px-4 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
+              >
+                View Results
+              </Link>
             </div>
 
-            <div className="text-center">
+            <div className="text-center flex flex-col items-center">
               <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <TrendingUp className="w-8 h-8 text-[#2d5a8f]" />
               </div>
               <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-sm text-gray-700">
                 4
               </div>
-              <h3 className="text-gray-900 mb-2">Clinical Decision</h3>
-              <p className="text-sm text-gray-600">
-                Make informed clinical decisions with confidence using evidence-based insights
+              <h3 className="text-gray-900 mb-2">Take Action</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Use the insights to make informed decisions and support the people in your care
               </p>
+              <Link
+                to="/dashboard"
+                className="mt-auto text-sm text-[#2d5a8f] border border-[#2d5a8f] px-4 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
+              >
+                Learn More
+              </Link>
             </div>
           </div>
         </div>

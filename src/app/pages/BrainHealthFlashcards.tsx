@@ -316,14 +316,37 @@ export function BrainHealthFlashcards() {
       <div className="max-w-7xl mx-auto px-6 py-10">
         {/* Page Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
               <Brain className="w-5 h-5 text-[#2d5a8f]" />
             </div>
-            <h1 className="text-2xl font-semibold text-gray-900">Brain Health Flashcards</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">Get a Quiz</h1>
           </div>
-          <p className="text-gray-500 text-sm ml-13">
-            Evidence-based tips sourced from{" "}
+          <p className="text-gray-600 text-sm mb-4 max-w-2xl">
+            These evidence-based flashcards are designed to support brain health awareness for everyone involved in dementia care. Tap any card to reveal the answer and discover practical tips you can use today.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mb-2">
+            <div className="bg-blue-50 rounded-lg px-4 py-3 border border-blue-100">
+              <div className="flex items-center gap-2 mb-1">
+                <Brain className="w-4 h-4 text-[#2d5a8f]" />
+                <span className="text-sm font-medium text-[#2d5a8f]">People Living with Dementia</span>
+              </div>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Learn evidence-based strategies to maintain independence, stay active, and support your quality of life at every stage.
+              </p>
+            </div>
+            <div className="bg-purple-50 rounded-lg px-4 py-3 border border-purple-100">
+              <div className="flex items-center gap-2 mb-1">
+                <Heart className="w-4 h-4 text-purple-600" />
+                <span className="text-sm font-medium text-purple-700">Carers &amp; Supporters</span>
+              </div>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Discover practical communication tips, activity ideas, and wellbeing strategies to help you provide the best possible care — while looking after yourself too.
+              </p>
+            </div>
+          </div>
+          <p className="text-gray-400 text-xs">
+            Content sourced from{" "}
             <a
               href="https://www.dementia.org.au/braintrack"
               target="_blank"
@@ -332,12 +355,11 @@ export function BrainHealthFlashcards() {
             >
               Dementia Australia <ExternalLink className="w-3 h-3" />
             </a>
-            . Tap a card to reveal the answer.
           </p>
         </div>
 
         {/* Audience Toggle */}
-        <div className="bg-white rounded-xl border border-gray-200 p-1.5 flex gap-1 mb-6 w-fit">
+        <div className="bg-white rounded-xl border border-gray-200 p-1.5 flex flex-wrap gap-1 mb-6 w-fit">
           <button
             onClick={() => handleAudienceChange("dementia")}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
@@ -382,10 +404,10 @@ export function BrainHealthFlashcards() {
           </div>
         </div>
 
-        {/* 70 / 30 layout */}
-        <div className="flex gap-6 items-start">
-          {/* Left — flashcard area (80%) */}
-          <div className="flex-[8] min-w-0">
+        {/* 80 / 20 layout — stacks on mobile */}
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          {/* Left — flashcard area */}
+          <div className="flex-[8] min-w-0 w-full">
             {orderedCards.length === 0 ? (
               <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center text-gray-400">
                 No flashcards in this category for the selected audience.
@@ -449,8 +471,8 @@ export function BrainHealthFlashcards() {
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-[#2d5a8f] text-xs font-medium rounded-full">
                           {CATEGORY_ICONS[card.category] ?? "📌"} {card.category}
                         </span>
-                        <span className="text-xs text-gray-400 flex items-center gap-1">
-                          <BookOpen className="w-3.5 h-3.5" /> Tap to reveal answer
+                        <span className="text-sm text-gray-500 flex items-center gap-1 font-medium">
+                          <BookOpen className="w-4 h-4" /> Tap to reveal answer
                         </span>
                       </div>
                       <div className="flex-1 flex items-center justify-center">
@@ -553,8 +575,8 @@ export function BrainHealthFlashcards() {
             )}
           </div>
 
-          {/* Right — data sources (20%) */}
-          <div className="flex-[2] min-w-0 sticky top-6">
+          {/* Right — data sources */}
+          <div className="flex-[2] min-w-0 w-full lg:sticky lg:top-6">
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Users className="w-4 h-4 text-[#2d5a8f]" />

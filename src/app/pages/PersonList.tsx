@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Navigation } from "../components/Navigation";
 import { useAuth } from "../context/AuthContext";
+import { Plus } from "lucide-react";
 
 interface Person {
   person_id: string;
@@ -40,6 +41,7 @@ function RiskTrendBadge({ trend }: { trend: string | null }) {
 
 export function PersonList() {
   const { email } = useAuth();
+  const navigate = useNavigate();
   const [persons, setPersons] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +64,16 @@ export function PersonList() {
       <Navigation />
 
       <div className="max-w-5xl mx-auto px-6 py-10">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Care Recipient List</h1>
+        <div className="flex items-center justify-between mb-1">
+          <h1 className="text-2xl font-bold text-gray-900">Care Recipient List</h1>
+          <button
+            onClick={() => navigate("/upload")}
+            className="flex items-center gap-1.5 bg-[#2d5a8f] text-white text-sm px-4 py-2 rounded-lg hover:bg-[#234a75] transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add New Care Recipient
+          </button>
+        </div>
         <p className="text-sm text-gray-500 mb-8">
           Manage and review care recipient recordings and analysis history
         </p>

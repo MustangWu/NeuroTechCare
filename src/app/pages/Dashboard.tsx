@@ -567,49 +567,53 @@ function BurdenTop10Chart() {
         <span>DALY: {METRIC_DEFS.DALY}</span>
       </p>
 
-      <ResponsiveContainer width="100%" height={360}>
-        <BarChart
-          data={chartData}
-          layout="vertical"
-          margin={{ top: 5, right: 40, left: 180, bottom: 20 }}
-        >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke="#e5e7eb"
-            horizontal={false}
-          />
-          <XAxis
-            type="number"
-            tick={{ fontSize: 11, fill: "#6b7280" }}
-            tickLine={false}
-            axisLine={false}
-            tickFormatter={(v) =>
-              v >= 1000 ? `${Math.round(v / 1000)}K` : String(v)
-            }
-            label={{
-              value: "Disability-adjusted life years (DALY)",
-              position: "insideBottom",
-              offset: -10,
-              style: { fontSize: 11, fill: "#6b7280" },
-            }}
-          />
-          <YAxis
-            type="category"
-            dataKey="disease"
-            tick={{ fontSize: 11, fill: "#6b7280" }}
-            tickLine={false}
-            axisLine={false}
-            width={175}
-          />
-          <Tooltip
-            formatter={(v: number) => [
-              `${v.toLocaleString()} DALYs`,
-              "Burden",
-            ]}
-          />
-          <Bar dataKey="daly" fill="#5f9eaf" radius={0} />
-        </BarChart>
-      </ResponsiveContainer>
+      <div className="overflow-x-auto">
+        <div style={{ minWidth: 480 }}>
+          <ResponsiveContainer width="100%" height={360}>
+            <BarChart
+              data={chartData}
+              layout="vertical"
+              margin={{ top: 5, right: 40, left: 180, bottom: 20 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#e5e7eb"
+                horizontal={false}
+              />
+              <XAxis
+                type="number"
+                tick={{ fontSize: 11, fill: "#6b7280" }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(v) =>
+                  v >= 1000 ? `${Math.round(v / 1000)}K` : String(v)
+                }
+                label={{
+                  value: "Disability-adjusted life years (DALY)",
+                  position: "insideBottom",
+                  offset: -10,
+                  style: { fontSize: 11, fill: "#6b7280" },
+                }}
+              />
+              <YAxis
+                type="category"
+                dataKey="disease"
+                tick={{ fontSize: 11, fill: "#6b7280" }}
+                tickLine={false}
+                axisLine={false}
+                width={175}
+              />
+              <Tooltip
+                formatter={(v: number) => [
+                  `${v.toLocaleString()} DALYs`,
+                  "Burden",
+                ]}
+              />
+              <Bar dataKey="daly" fill="#5f9eaf" radius={0} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </ChartShell>
   );
 }
