@@ -32,7 +32,7 @@ export function Landing() {
                 to="/dashboard"
                 className="border border-gray-300 text-gray-900 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                Find Out More
+                Learn More
               </Link>
             </div>
           </div>
@@ -151,7 +151,7 @@ export function Landing() {
                 to="/dashboard"
                 className="mt-auto text-sm text-[#2d5a8f] border border-[#2d5a8f] px-4 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
               >
-                Find Out More
+                Learn More
               </Link>
             </div>
           </div>

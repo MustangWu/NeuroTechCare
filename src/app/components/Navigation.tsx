@@ -17,16 +17,6 @@ export function Navigation() {
 
         <nav className="flex items-center gap-4 shrink-0">
           <Link
-            to="/"
-            className={`text-sm pb-1 ${
-              location.pathname === "/"
-                ? "text-gray-900 font-medium border-b-2 border-blue-600"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            Home
-          </Link>
-          <Link
             to="/upload"
             className={`text-sm pb-1 ${
               location.pathname === "/upload"
@@ -35,16 +25,6 @@ export function Navigation() {
             }`}
           >
             Upload
-          </Link>
-          <Link
-            to="/persons"
-            className={`text-sm pb-1 ${
-              location.pathname.startsWith("/person")
-                ? "text-gray-900 font-medium border-b-2 border-blue-600"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            Track Care Recipients
           </Link>
           <Link
             to="/results"
@@ -57,6 +37,16 @@ export function Navigation() {
             Results
           </Link>
           <Link
+            to="/persons"
+            className={`text-sm pb-1 ${
+              location.pathname.startsWith("/person")
+                ? "text-gray-900 font-medium border-b-2 border-blue-600"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            Track Recipients
+          </Link>
+          <Link
             to="/flashcards"
             className={`text-sm pb-1 ${
               location.pathname === "/flashcards"
@@ -64,7 +54,7 @@ export function Navigation() {
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
-            Get a Quiz
+            Take a Quiz
           </Link>
           <Link
             to="/dashboard"
@@ -74,7 +64,7 @@ export function Navigation() {
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
-            Find Out More
+            Learn More
           </Link>
         </nav>
         {email && (
