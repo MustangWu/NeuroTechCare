@@ -424,13 +424,22 @@ export function Upload() {
           </div>
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-[#2d5a8f] text-white py-3 rounded-lg hover:bg-[#234a75] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Analysing…" : "Upload & Analyse"}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex-1 bg-[#2d5a8f] text-white py-3 rounded-lg hover:bg-[#234a75] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Analysing…" : "Upload & Analyse"}
+            </button>
+            <button
+              type="button"
+              onClick={loadDemo}
+              className="shrink-0 border border-gray-300 text-gray-500 px-3 py-3 rounded-lg hover:bg-gray-50 transition-colors text-xs whitespace-nowrap"
+            >
+              Click to see a sample result
+            </button>
+          </div>
 
           {isSubmitting && (
             <div className="mt-4 flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
@@ -440,20 +449,6 @@ export function Upload() {
               </p>
             </div>
           )}
-
-          <div className="relative flex items-center gap-3 my-1">
-            <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs text-gray-400">or</span>
-            <div className="flex-1 h-px bg-gray-200" />
-          </div>
-
-          <button
-            type="button"
-            onClick={loadDemo}
-            className="w-full border border-gray-300 text-gray-600 py-3 rounded-lg hover:bg-gray-50 transition-colors text-sm"
-          >
-            Load Demo Results
-          </button>
         </form>
       </div>
     </div>
